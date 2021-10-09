@@ -15151,6 +15151,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/slider.js");
 /* harmony import */ var _modules_modals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modals */ "./src/js/modules/modals.js");
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
+/* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+
 
 
 
@@ -15158,7 +15160,75 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_modals__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.glazing_slider', '.glazing_block', '.glazing_content', 'active');
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.decoration_slider', '.no_click', '.decoration_content > div > div', 'after_click');
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/forms.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/forms.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const forms = () => {
+  const allForms = document.querySelectorAll('form'),
+        inputs = document.querySelectorAll('input');
+  const messageText = {
+    loading: 'Загрузука...',
+    finished: 'Спасибо! Скоро мы с вами свяжемся',
+    error: 'Ошибка. Что-то пошло не так...',
+    typeError: 'Поле для телефона должно содержать только цифры'
+  };
+
+  const postData = async (url, data) => {
+    document.querySelector('.status').textContent = messageText.loading;
+    let res = await fetch(url, {
+      method: 'POST',
+      body: data
+    });
+    console.log(res);
+    return await res.text();
+  };
+
+  const clearInputs = () => {
+    inputs.forEach(item => item.value = "");
+  };
+
+  allForms.forEach(form => {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const message = document.createElement('div');
+      message.classList.add('status');
+      form.append(message);
+
+      if (!isFinite(form.elements.user_phone.value)) {
+        message.textContent = messageText.typeError;
+        setTimeout(() => message.remove(), 5000);
+        return console.log(messageText.typeError);
+      }
+
+      const formData = new FormData(form),
+            obj = {};
+      formData.forEach((value, key) => {
+        obj[key] = value;
+      });
+      console.log(obj);
+      postData('../../assets/server.php', JSON.stringify(obj)).then(res => {
+        console.log(res);
+        message.textContent = messageText.finished;
+      }).catch(() => message.textContent = messageText.error).finally(() => {
+        clearInputs();
+        setTimeout(() => message.remove(), 5000);
+      });
+    });
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (forms);
 
 /***/ }),
 
