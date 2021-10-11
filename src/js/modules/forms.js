@@ -1,13 +1,11 @@
-const forms = () => {
+import checkNumInputs from "./checkNumInputs";
+
+const forms = (state) => {
     const allForms = document.querySelectorAll('form'),
           inputs = document.querySelectorAll('input'),
-          phoneInputs = document.querySelectorAll('input[name="user_phone"]');
+          windows = document.querySelectorAll('[data-modal]');
 
-    phoneInputs.forEach(item => {
-        item.addEventListener('input', () => {
-            item.value = item.value.replace(/\D/, '');
-        });
-    });
+    checkNumInputs('input[name="user_phone"]');
 
     const messageText = {
         loading: 'Загрузука...',
@@ -39,14 +37,16 @@ const forms = () => {
             message.classList.add('status');
             form.append(message);
 
-            const formData = new FormData(form),
-                  obj = {};
+            const formData = new FormData(form);
 
-            // formData.forEach((value, key) => {
-            //     obj[key] = value;
-            // });
+            if (form.getAttribute('data-calc') === 'end') {
+                delete state['allow'];
 
-            // console.log(obj);
+                for (let key in state) {
+                    formData.append(key, state[key]);
+                    delete state[key];
+                }
+            }
 
             postData('../../assets/server.php', formData)
                 .then(res => {
@@ -56,7 +56,14 @@ const forms = () => {
                 .catch(() => message.textContent = messageText.error)
                 .finally(() => {
                     clearInputs();
-                    setTimeout(() => message.remove(), 5000);
+                    setTimeout(() => {
+                        message.remove();
+                    
+                        windows.forEach(item => {
+                            item.style.display = 'none';
+                        });
+                        document.body.style.overflow = "";
+                    }, 5000);
                 });
 
         });
