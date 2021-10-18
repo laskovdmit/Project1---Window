@@ -1,4 +1,4 @@
-import checkNumInputs from "./checkNumInputs";
+import checkNumInputs from './checkNumInputs';
 
 const forms = (state) => {
     const allForms = document.querySelectorAll('form'),
@@ -21,7 +21,6 @@ const forms = (state) => {
             body: data
         });
 
-        console.log(res);
         return await res.text();
     };
 
@@ -65,7 +64,6 @@ const forms = (state) => {
                         document.body.style.overflow = "";
                     }, 5000);
                 });
-
         });
     });
 };

@@ -35,7 +35,7 @@ const timer = (id, deadline) => {
         updateClock();
 
         function updateClock() {
-            const t = getTimeRemaining(deadline);
+            const t = getTimeRemaining(endtime);
             
             days.textContent = addZeroToNum(t.days);
             hours.textContent = addZeroToNum(t.hours);
